@@ -1,3 +1,3 @@
-[submodule "utility"]
-	path = utility
+[submodule "ServerUtility"]
+	path = ServerUtility
 	url = https://github.com/LiF-x/ServerUtility
