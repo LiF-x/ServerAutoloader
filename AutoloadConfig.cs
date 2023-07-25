@@ -20,4 +20,4 @@ $LiFx::AlignmentUpdateDelta = 1;
 // LiFx Loot config
 $LiFx::loot::numDrops = 4; // number of drops
 
-$LiFx::autoLoadVersion = "312"; // Do not edit
+$LiFx::autoLoadVersion = "401"; // Do not edit

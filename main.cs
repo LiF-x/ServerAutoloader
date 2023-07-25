@@ -64,7 +64,7 @@ if (!isObject(ObjectsTypes))
     };
 }
 $LiFx::debug = 0;
-$LiFx::Version = "v4.0.0";
+$LiFx::Version = "v4.0.1";
 $LiFx::createDataXMLS = false;
 $LiFx::hooks::onSpawnCallbacks = JettisonArray("onSpawnCallbacks");
 $LiFx::hooks::onConnectCallbacks = JettisonArray("onConnectCallbacks");
