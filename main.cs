@@ -64,7 +64,7 @@ if (!isObject(ObjectsTypes))
     };
 }
 $LiFx::debug = 0;
-$LiFx::Version = "v4.0.1";
+$LiFx::Version = "v4.1.0";
 $LiFx::createDataXMLS = false;
 $LiFx::hooks::onSpawnCallbacks = JettisonArray("onSpawnCallbacks");
 $LiFx::hooks::onConnectCallbacks = JettisonArray("onConnectCallbacks");
@@ -124,9 +124,8 @@ package LiFx
     {
         %file = new FileObject(){};
         %data = "";
-        %dumpeofconfig = "-- LiFx Framework anything below this line will be reset on server boot up";
         
-        %file.openForRead("sql/dump.sql");
+        %file.openForRead("art/dump.sql"); // Always open a fresh known good copy of dump.sql for compatibility with lifx
         if (%file)
         {
             %alter1 = "ALTER TABLE `objects_types` ALTER `ID` DROP DEFAULT;";
@@ -142,48 +141,17 @@ package LiFx
             while (!%file.isEOF())
             {
                 %dataLine = %file.readLine();
-                if (%dataLine $= %alter1)
-                {
-                    %read1 = 1;
-                }
-                if (%dataLine $= %alter2)
-                {
-                    %read2 = 1;
-                }
-                if (%dataLine $= %alter3)
-                {
-                    %read3 = 1;
-                }
-                if (%dataLine $= %alter4)
-                {
-                    %read4 = 1;
-                }
-                if (%dataLine $= %alter5)
-                {
-                    %read5 = 1;
-                }
                 %data = %data @ %dataLine @ "\n";
-                if ((((%read1 && %read2) && %read3) && %read4) && %read5)
-                {
-                    continue;
-                }
             }
             %file.close();
             %file.openForWrite("sql/dump.sql");
             %file.writeLine(%data);
-
-            if (((%read1 && %read2) && %read3) && %read4)
-            {
-                %file.close();
-                return;
-            }
             %file.writeLine("");
+            %file.writeLine(%alter4);
+            %file.writeLine(%alter5);
             %file.writeLine(%alter1);
             %file.writeLine(%alter2);
             %file.writeLine(%alter3);
-            %file.writeLine(%alter4);
-            %file.writeLine(%alter5);
-            %file.writeLine(%dumpeofconfig);
             %file.close();
         }
     }
@@ -460,8 +428,6 @@ package LiFx
         }
     }
     function LiFx::titleprompt() {
-      echo("==================================================================================================================================");
-      echo("");
       echo("ooooo         o8o   .o88o.                 o8o                oooooooooooo                             .o8            oooo  ");
       echo("`888'         `\"'   888 `\"                 `\"'                `888'     `8                            \"888            `888  ");
       echo(" 888         oooo  o888oo   .ooooo.       oooo   .oooo.o       888          .ooooo.  oooo  oooo   .oooo888   .oooo.    888  ");
@@ -483,14 +449,12 @@ package LiFx
       echo("                                                                                                                            ");
       echo("                                                                                                                            ");
       echo("                                                .o         .oooo.         .oooo.                                            ");
-      echo("                                              .d88        d8P'`Y8b       d8P'`Y8b                                           ");
-      echo("                              oooo    ooo   .d'888       888    888     888    888                                          ");
-      echo("                               `88.  .8'  .d'  888       888    888     888    888                                          ");
-      echo("                                `88..8'   88ooo888oo     888    888     888    888                                          ");
-      echo("                                 `888'         888   .o. `88b  d88' .o. `88b  d88'                                          ");
-      echo("                                  `8'         o888o  Y8P  `Y8bd8P'  Y8P  `Y8bd8P'                                           ");
-      echo("                                                                                                                            ");
-      echo("                                                                                                                            ");
+      echo("                                              .d88        d8P'`Y8b      .dP\"\"Y88b                                           ");
+      echo("                              oooo    ooo   .d'888       888    888           ]8P'                                          ");
+      echo("                               `88.  .8'  .d'  888       888    888         .d8P'                                           ");
+      echo("                                `88..8'   88ooo888oo     888    888       .dP'                                              ");
+      echo("                                 `888'         888   .o. `88b  d88' .o. .oP     .o                                          ");
+      echo("                                  `8'         o888o  Y8P  `Y8bd8P'  Y8P 8888888888                                          ");
       echo("");
       echo("8fe888bf5ef2ef61cf85b2cef010fb7c9140ce0442a573f2aef4d1d279bfd0a8");
       echo("==================================================================================================================================");
