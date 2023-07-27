@@ -64,7 +64,7 @@ if (!isObject(ObjectsTypes))
     };
 }
 $LiFx::debug = 0;
-$LiFx::Version = "v4.1.0";
+$LiFx::Version = "v4.1.1";
 $LiFx::createDataXMLS = false;
 $LiFx::hooks::onSpawnCallbacks = JettisonArray("onSpawnCallbacks");
 $LiFx::hooks::onConnectCallbacks = JettisonArray("onConnectCallbacks");
@@ -448,13 +448,13 @@ package LiFx
       echo("                                                                                                                            ");
       echo("                                                                                                                            ");
       echo("                                                                                                                            ");
-      echo("                                                .o         .oooo.         .oooo.                                            ");
-      echo("                                              .d88        d8P'`Y8b      .dP\"\"Y88b                                           ");
-      echo("                              oooo    ooo   .d'888       888    888           ]8P'                                          ");
-      echo("                               `88.  .8'  .d'  888       888    888         .d8P'                                           ");
-      echo("                                `88..8'   88ooo888oo     888    888       .dP'                                              ");
-      echo("                                 `888'         888   .o. `88b  d88' .o. .oP     .o                                          ");
-      echo("                                  `8'         o888o  Y8P  `Y8bd8P'  Y8P 8888888888                                          ");
+      echo("                                                .o         .o        .o                                                     ");
+      echo("                                              .d88       o888      o888                                                     ");
+      echo("                              oooo    ooo   .d'888        888       888                                                     ");
+      echo("                               `88.  .8'  .d'  888        888       888                                                     ");
+      echo("                                `88..8'   88ooo888oo      888       888                                                     ");
+      echo("                                 `888'         888   .o.  888  .o.  888                                                     ");
+      echo("                                  `8'         o888o  Y8P o888o Y8P o888o                                                    ");
       echo("");
       echo("8fe888bf5ef2ef61cf85b2cef010fb7c9140ce0442a573f2aef4d1d279bfd0a8");
       echo("==================================================================================================================================");
