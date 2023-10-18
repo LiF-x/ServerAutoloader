@@ -64,7 +64,7 @@ if (!isObject(ObjectsTypes))
     };
 }
 $LiFx::debug = 0;
-$LiFx::Version = "v4.1.1";
+$LiFx::Version = "v4.2.0";
 $LiFx::createDataXMLS = false;
 $LiFx::hooks::onSpawnCallbacks = JettisonArray("onSpawnCallbacks");
 $LiFx::hooks::onConnectCallbacks = JettisonArray("onConnectCallbacks");
@@ -428,7 +428,7 @@ package LiFx
         }
     }
     function LiFx::titleprompt() {
-      echo("ooooo         o8o   .o88o.                 o8o                oooooooooooo                             .o8            oooo  ");
+            echo("ooooo         o8o   .o88o.                 o8o                oooooooooooo                             .o8            oooo  ");
       echo("`888'         `\"'   888 `\"                 `\"'                `888'     `8                            \"888            `888  ");
       echo(" 888         oooo  o888oo   .ooooo.       oooo   .oooo.o       888          .ooooo.  oooo  oooo   .oooo888   .oooo.    888  ");
       echo(" 888         `888   888    d88' `88b      `888  d88(  \"8       888oooo8    d88' `88b `888  `888  d88' `888  `P  )88b   888  ");
@@ -448,15 +448,16 @@ package LiFx
       echo("                                                                                                                            ");
       echo("                                                                                                                            ");
       echo("                                                                                                                            ");
-      echo("                                                .o         .o        .o                                                     ");
-      echo("                                              .d88       o888      o888                                                     ");
-      echo("                              oooo    ooo   .d'888        888       888                                                     ");
-      echo("                               `88.  .8'  .d'  888        888       888                                                     ");
-      echo("                                `88..8'   88ooo888oo      888       888                                                     ");
-      echo("                                 `888'         888   .o.  888  .o.  888                                                     ");
-      echo("                                  `8'         o888o  Y8P o888o Y8P o888o                                                    ");
+      echo("                                                .o         .oooo.         .oooo.                                            ");
+      echo("                                              .d88       .dP\"\"Y88b       d8P'`Y8b                                           ");
+      echo("                              oooo    ooo   .d'888             ]8P'     888    888                                          ");
+      echo("                               `88.  .8'  .d'  888           .d8P'      888    888                                          ");
+      echo("                                `88..8'   88ooo888oo       .dP'         888    888                                          ");
+      echo("                                 `888'         888   .o. .oP     .o .o. `88b  d88'                                          ");
+      echo("                                  `8'         o888o  Y8P 8888888888 Y8P  `Y8bd8P'                                           ");
+      echo("                                                                                                                            ");
+      echo("                                                                                                                            ");
       echo("");
-      echo("8fe888bf5ef2ef61cf85b2cef010fb7c9140ce0442a573f2aef4d1d279bfd0a8");
       echo("==================================================================================================================================");
       echo("");
     }
