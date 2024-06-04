@@ -8,7 +8,7 @@ LiFx - AutoloadConfig
 // Custom settings and your own mods
 
 // -------------------- DO NOT ADD NEW VARIABLES BELOW THIS LINE ----------------------------- //
-$LiFx::createDataXMLS = false; // To create recipe, recipe_requirements and objects_types xml from the database
+$LiFx::createDataXMLS = true; // To create recipe, recipe_requirements and objects_types xml from the database
 
 // Offline Raid Protection
 $LiFx::raidProtection::timeToProtection = 15; // Defaults to 15 min check interval after people disconnect.
@@ -32,4 +32,4 @@ $LiFx::AlignmentUpdateDelta = 1;
 // LiFx Loot config
 $LiFx::loot::numDrops = 4; // number of drops
 
-$LiFx::autoLoadVersion = "420"; // Do not edit
+$LiFx::autoLoadVersion = "430"; // Do not edit

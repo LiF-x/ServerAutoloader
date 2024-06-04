@@ -63,8 +63,37 @@ if (!isObject(ObjectsTypes))
         AllowExportFromGreen = 0;
     };
 }
+if (!isObject(Recipes))
+{
+    new ScriptObject(Recipes)
+    {
+        
+        RecipeName = "";
+        Description = "";
+        StartingToolsID = 0;
+        SkillTypeID = 0;
+        SkillLvl = 0;
+        ResultObjectTypeID = 0;
+        SkillDepends = 0;
+        Quantity = 0;
+        Autorepeat = 0;
+        IsBlueprint = 0;
+        ImagePath = "";
+        Requirements = JettisonArray("Requirements");
+    };
+    if (!isObject(RecipeRequirements))
+    {
+        new ScriptObject(RecipeRequirements) {
+            MaterialObjectTypeID = 0;
+            Quality = 0;
+            Influence = 0;
+            Quantity = 0;
+            IsRegionItemRequired = 0;
+        };
+    }
+}
 $LiFx::debug = 0;
-$LiFx::Version = "v4.2.0";
+$LiFx::Version = "v4.3.0";
 $LiFx::createDataXMLS = false;
 $LiFx::hooks::onSpawnCallbacks = JettisonArray("onSpawnCallbacks");
 $LiFx::hooks::onConnectCallbacks = JettisonArray("onConnectCallbacks");
@@ -78,6 +107,7 @@ $LiFx::hooks::onSuicideCallbacks = JettisonArray("onSuicideCallbacks");
 $LiFx::hooks::onJHStartCallbacks = JettisonArray("onJHStartCallbacks");
 $LiFx::hooks::onJHEndCallbacks = JettisonArray("onJHEndCallbacks");
 $LiFx::hooks::onServerCreatedCallbacks = JettisonArray("onServerCreatedCallbacks");
+$LiFx::hooks::preServerCreatedCallbacks = JettisonArray("preServerCreatedCallbacks");
 $LiFx::hooks::onDestroyServerCallbacks = JettisonArray("onDestroyServerCallbacks");
 $LiFx::hooks::onStartCallbacks = JettisonArray("onStartCallbacks");
 $LiFx::hooks::onPostInitCallbacks = JettisonArray("onPostInitCallbacks");
@@ -138,6 +168,9 @@ package LiFx
             %read4 = 0;
             %alter5 = "SET FOREIGN_KEY_CHECKS=0;";
             %read5 = 0;
+            
+            %alter6 = "ALTER TABLE `recipe_requirement` AUTO_INCREMENT=4261;";
+            %read6 = 0;
             while (!%file.isEOF())
             {
                 %dataLine = %file.readLine();
@@ -152,6 +185,7 @@ package LiFx
             %file.writeLine(%alter1);
             %file.writeLine(%alter2);
             %file.writeLine(%alter3);
+            %file.writeLine(%alter6);
             %file.close();
         }
     }
@@ -159,7 +193,7 @@ package LiFx
     {
         if (!isObject(%object) && !(%object.ID))
         {
-            error("Invalid object types object");
+            error("Invalid object types object in mod" SPC %class);
             LiFx::debugEcho("Invalid object types object");
             quit();
             return;
@@ -192,6 +226,77 @@ package LiFx
             %file.writeLine("\n" @ %objectSQL);
             %file.close();
         }
+    }
+    function LiFx::registerRecipe(%recipe, %class)
+    {
+        if (!isObject(%recipe) && !(%recipe.ID) && (%recipe.ResultObjectTypeID) && (%recipe.StartingToolsID) && (%recipe.SkillTypeID) && (%recipe.Requirements.Length > 0))
+        {
+            error("Invalid recipe object");
+            LiFx::debugEcho("Invalid recipe object");
+            quit();
+            return;
+        }
+        %hundredpercent = 0;
+        %hundredpercent = %recipe.SkillDepends;
+        for (%i = 0; %i < %recipe.Requirements.Length; %i++)
+        {
+            %requirement = %recipe.Requirements.value[%i];
+            %hundredpercent = %hundredpercent + %requirement.Influence;
+        }
+        if(%hundredpercent != 100)
+        {
+          error("Invalid recipe object" SPC %recipe.RecipeName SPC "in mod" SPC %class @ ", Influence must add up to 100% your total is" SPC %hundredpercent @ "%);");
+          LiFx::debugEcho("Invalid recipe object, Influence must add up to 100%");
+          quit();
+          return;
+        }
+        %found = 0;
+        %objectSQL = "INSERT INTO `recipe` VALUES (NULL,\'" @ %recipe.RecipeName @ "\',\'" @ %recipe.Description @ "\'," @ %recipe.StartingToolsID @ "," @ %recipe.SkillTypeID @ "," @ %recipe.SkillLvl @ "," @ %recipe.ResultObjectTypeID @ "," @ %recipe.SkillDepends @ "," @ %recipe.Quantity @ "," @ %recipe.Autorepeat @ "," @ %recipe.IsBlueprint @ ",\'" @ %recipe.ImagePath @ "\');";
+        %file = new FileObject("")
+        {
+        };
+        %file.openForRead("sql/dump.sql");
+        if (%file)
+        {
+            while (!%file.isEOF())
+            {
+                %data = %file.readLine();
+                if (%data $= %objectSQL)
+                {
+                    %found = 1;
+                    break;
+                }
+            }
+            %file.close();
+            if (%found)
+            {
+                LiFx::debugEcho("dump.sql already updated");
+                return;
+            }
+            %file.openForAppend("sql/dump.sql");
+            LiFx::debugEcho("Write SQL: " SPC %objectSQL);
+            %file.writeLine("\n" @ %objectSQL);
+            for (%i = 0; %i < %recipe.Requirements.Length; %i++)
+            {
+                %requirement = %recipe.Requirements.value[%i];
+                %objectSQL = "INSERT INTO `recipe_requirement` VALUES (NULL,(SELECT MAX(ID) FROM recipe ORDER BY ID DESC LIMIT 1)," @ %requirement.MaterialObjectTypeID @ "," @ %requirement.Quality @ "," @ %requirement.Influence @ "," @ %requirement.Quantity @ "," @ %requirement.IsRegionItemRequired @ ");";
+                LiFx::debugEcho("Write SQL: " SPC %objectSQL);
+                %file.writeLine("\n" @ %objectSQL);
+            }
+            %file.close();
+            %recipe.Requirements.delete();
+        }
+        %recipe.delete();
+    }
+    function LiFx::RecipeRequirement(%MaterialObjectTypeID, %Quality, %Influence, %Quantity, %IsRegionItemRequired){
+      return new ScriptObject(""){
+        class = RecipeRequirements;
+        MaterialObjectTypeID = %MaterialObjectTypeID;
+        Quality = %Quality;
+        Influence = %Influence;
+        Quantity = %Quantity;
+        IsRegionItemRequired = %IsRegionItemRequired;
+      };
     }
     function LiFx::executeCallback(%array)
     {
@@ -400,6 +505,10 @@ package LiFx
     {
         if (!isFile("mods/AutoloadConfig.cs") || %overwrite)
         {
+            if(isFile("mods/AutoloadConfig.cs"))
+            {
+              pathCopy("mods/AutoloadConfig.cs","mods/AutoloadConfig.cs.bak");
+            }
             %zip = new ZipObject("")
             {
             };
@@ -428,7 +537,7 @@ package LiFx
         }
     }
     function LiFx::titleprompt() {
-            echo("ooooo         o8o   .o88o.                 o8o                oooooooooooo                             .o8            oooo  ");
+      echo("ooooo         o8o   .o88o.                 o8o                oooooooooooo                             .o8            oooo  ");
       echo("`888'         `\"'   888 `\"                 `\"'                `888'     `8                            \"888            `888  ");
       echo(" 888         oooo  o888oo   .ooooo.       oooo   .oooo.o       888          .ooooo.  oooo  oooo   .oooo888   .oooo.    888  ");
       echo(" 888         `888   888    d88' `88b      `888  d88(  \"8       888oooo8    d88' `88b `888  `888  d88' `888  `P  )88b   888  ");
@@ -451,18 +560,28 @@ package LiFx
       echo("                                                .o         .oooo.         .oooo.                                            ");
       echo("                                              .d88       .dP\"\"Y88b       d8P'`Y8b                                           ");
       echo("                              oooo    ooo   .d'888             ]8P'     888    888                                          ");
-      echo("                               `88.  .8'  .d'  888           .d8P'      888    888                                          ");
-      echo("                                `88..8'   88ooo888oo       .dP'         888    888                                          ");
-      echo("                                 `888'         888   .o. .oP     .o .o. `88b  d88'                                          ");
-      echo("                                  `8'         o888o  Y8P 8888888888 Y8P  `Y8bd8P'                                           ");
+      echo("                               `88.  .8'  .d'  888           <88b.      888    888                                          ");
+      echo("                                `88..8'   88ooo888oo          `88b.     888    888                                          ");
+      echo("                                 `888'         888   .o. o.   .88P  .o. `88b  d88'                                          ");
+      echo("                                  `8'         o888o  Y8P `8bd88P'   Y8P  `Y8bd8P'                                           ");
+      echo("                                                                                                                            ");
       echo("                                                                                                                            ");
       echo("                                                                                                                            ");
       echo("");
+      echo("==================================================================================================================================");
+      for(%i = 0; %i < 10; %i++){
+        echo("");
+      }
+      echo("               Get your Linux dedicated server hosting today, at https://rampart.games proud sponsor of LiFx");
+      for(%i = 0; %i < 10; %i++){
+        echo("");
+      }
       echo("==================================================================================================================================");
       echo("");
     }
     function onServerCreated()
     {
+        LiFx::executeCallback($LiFx::hooks::preServerCreatedCallbacks);
         deactivatePackage(LiFx);
         onServerCreated();
         activatePackage(LiFx);
